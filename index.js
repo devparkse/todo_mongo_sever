@@ -10,6 +10,7 @@ const { Todo } = require("./model/TodoModel.js");
 // 개발 인증관련
 const config = require("./config/key.js");
 const { response } = require("express");
+const { read } = require("fs");
 
 // express 인스턴스 생성
 const app = express();
@@ -64,7 +65,6 @@ app.post("/api/post/submit", (req, res) => {
       res.status(400).json({ success: false });
     });
 });
-
 // 목록 읽어오기
 app.post("/api/post/list", (req, res) => {
   // console.log("전체목록 호출");
@@ -76,6 +76,67 @@ app.post("/api/post/list", (req, res) => {
     })
     .catch((error) => {
       console.log(error);
+      res.status(400).json({ success: false });
+    });
+});
+// 할일의 completed 를 업데이트
+app.post("/api/post/updatetoggle", (req, res) => {
+  // console.log(req.body);
+  let temp = {
+    completed: req.body.completed,
+  };
+  // mongoose 문서 참조
+  Todo.updateOne({ id: req.body.id }, { $set: temp })
+    .exec()
+    .then(() => {
+      // console.log("completed 업데이트 완료");
+      res.status(200).json({ success: true });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+// 타이틀 업데이트
+app.post("/api/post/updatetitle", (req, res) => {
+  // console.log(req.body);
+  let temp = {
+    title: req.body.title,
+  };
+
+  // mongoose 문서 참조
+  Todo.updateOne({ id: req.body.id }, { $set: temp })
+    .exec()
+    .then(() => {
+      // console.log("completed 업데이트 완료");
+      res.status(200).json({ success: true });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(400).json({ success: false });
+    });
+});
+// 할일 삭제
+app.post("/api/post/delete", (req, res) => {
+  console.log(req.body);
+  Todo.deleteOne({ id: req.body.id })
+    .exec()
+    .then(() => {
+      res.status(200).json({ success: true });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(400).json({ success: false });
+    });
+});
+// 전체 할일 삭제
+app.post("/api/post/deleteall", (rea, res) => {
+  Todo.deleteMany()
+    .exec()
+    .then(() => {
+      res.status(200).json({ success: true });
+    })
+    .catch((err) => {
+      console.log(err);
       res.status(400).json({ success: false });
     });
 });
