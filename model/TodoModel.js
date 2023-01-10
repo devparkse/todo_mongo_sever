@@ -5,6 +5,11 @@ const todoSchema = new mongoose.Schema(
     id: Number,
     title: String,
     completed: Boolean,
+    // (mongoose) objectId 를 통해서 다른 Model 에 접근
+    author: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
   },
   { collection: "todos" }
 );
